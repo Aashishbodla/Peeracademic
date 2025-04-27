@@ -3,6 +3,8 @@ const cors = require('cors');
 const { initializeDatabase, testConnection } = require('./db');
 const apiRoutes = require('./routes/api');
 
+const bcrypt = require('bcryptjs'); // Instead of 'bcrypt'
+
 const app = express();
 const PORT = process.env.PORT || 5000;
 
