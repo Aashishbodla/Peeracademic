@@ -1,4 +1,4 @@
-const API_BASE = 'http://localhost:5000/api';
+const API_BASE = 'https://peeracademic-backend.onrender.com/api'; // Replace with your Render URL
 
 const handleResponse = async (response) => {
   if (!response.ok) {
