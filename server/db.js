@@ -57,3 +57,22 @@ async function testConnection() {
 }
 
 module.exports = { pool, initializeDatabase, testConnection };
+
+
+
+// Removed duplicate declaration of 'pool' and adjusted the code to use the existing 'pool' variable.
+
+async function initializeDatabaseWithEnv() {
+  try {
+    console.log('Attempting to connect to database with URL:', process.env.DATABASE_URL);
+    const client = await pool.connect();
+    // Create tables or perform initialization
+    client.release();
+    console.log('Database initialized successfully');
+  } catch (err) {
+    console.error('Database initialization failed:', err);
+    throw err;
+  }
+}
+
+module.exports = { pool, initializeDatabase, initializeDatabaseWithEnv };

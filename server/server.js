@@ -26,14 +26,14 @@ app.use((err, req, res, next) => {
 
 async function startServer() {
   try {
-    await initializeDatabase();
-    await testConnection();
+    await initializeDatabase(); // This connects to the database
+    const PORT = process.env.PORT || 5500;
     app.listen(PORT, () => {
-      console.log(`Server running on http://localhost:${PORT}`);
+      console.log(`Server running on port ${PORT}`);
     });
   } catch (err) {
     console.error('Failed to start server:', err);
-    process.exit(1);
+    throw err;
   }
 }
 
