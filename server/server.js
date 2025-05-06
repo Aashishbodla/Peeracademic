@@ -8,6 +8,15 @@ const bcrypt = require('bcryptjs');
 
 const app = express();
 
+
+const path = require('path');
+app.use(express.static(path.join(__dirname, 'public'))); // or 'dist'
+
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
+
 // Configure CORS using environment variable
 const allowedOrigins = process.env.CORS_ORIGIN ? process.env.CORS_ORIGIN.split(',') : ['http://127.0.0.1:5500'];
 const corsOptions = {
