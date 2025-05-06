@@ -8,15 +8,6 @@ const bcrypt = require('bcryptjs');
 
 const app = express();
 
-
-const path = require('path');
-app.use(express.static(path.join(__dirname, 'public'))); // or 'dist'
-
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
-});
-
-
 // Configure CORS using environment variable
 const allowedOrigins = process.env.CORS_ORIGIN ? process.env.CORS_ORIGIN.split(',') : ['http://127.0.0.1:5500'];
 const corsOptions = {
@@ -28,6 +19,11 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.use(express.json());
 app.use('/api', apiRoutes);
+
+// Root route for testing
+app.get('/', (req, res) => {
+  res.send('Peer-to-Peer Academic Assistance Backend');
+});
 
 // Health check route
 app.get('/health', (req, res) => {
