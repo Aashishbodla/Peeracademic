@@ -1,4 +1,4 @@
-require('dotenv').config(); // Load environment variables from .env file
+require('dotenv').config();
 
 const express = require('express');
 const cors = require('cors');
@@ -11,14 +11,19 @@ const app = express();
 // Configure CORS using environment variable
 const allowedOrigins = process.env.CORS_ORIGIN ? process.env.CORS_ORIGIN.split(',') : ['http://127.0.0.1:5500'];
 const corsOptions = {
-  origin: allowedOrigins, // Allow requests from specified origins
-  credentials: true, // Allow cookies or authorization headers if needed
-  optionsSuccessStatus: 200 // For legacy browser compatibility
+  origin: allowedOrigins,
+  credentials: true,
+  optionsSuccessStatus: 200
 };
 
 app.use(cors(corsOptions));
 app.use(express.json());
 app.use('/api', apiRoutes);
+
+// Health check route
+app.get('/health', (req, res) => {
+  res.status(200).json({ status: 'OK', message: 'Backend is running' });
+});
 
 // Error-handling middleware
 app.use((err, req, res, next) => {
@@ -34,7 +39,7 @@ async function startServer() {
       SSL_ENABLED: process.env.SSL_ENABLED,
       CORS_ORIGIN: process.env.CORS_ORIGIN
     });
-    await initializeDatabase(); // Connect to the database
+    await initializeDatabase();
     const PORT = process.env.PORT || 5500;
     app.listen(PORT, () => {
       console.log(`Server running on port ${PORT}`);
