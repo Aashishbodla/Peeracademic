@@ -1,4 +1,5 @@
 const API_BASE = 'http://localhost:5000/api';
+export const API_BASE_URL = 'https://<Peeracademic>.onrender.com/api';
 
 const handleResponse = async (response) => {
   if (!response.ok) {
