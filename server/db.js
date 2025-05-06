@@ -1,16 +1,22 @@
 const { Pool } = require('pg');
 
+// Throw an error if DATABASE_URL is not set
+if (!process.env.DATABASE_URL) {
+  throw new Error('DATABASE_URL environment variable is not set');
+}
+
 const pool = new Pool({
-  user: 'postgres',
-  host: 'localhost',
-  database: 'academic_assistance',
-  password: '1019', // Replace with your PostgreSQL password
-  port: 5432,
+  connectionString: process.env.DATABASE_URL,
+  ssl: process.env.SSL_ENABLED === 'true' ? { rejectUnauthorized: false } : false
 });
 
 async function initializeDatabase() {
   try {
-    await pool.query(`
+    console.log('Attempting to connect to database with URL:', process.env.DATABASE_URL);
+    const client = await pool.connect();
+    
+    // Create tables
+    await client.query(`
       CREATE TABLE IF NOT EXISTS users (
         user_id VARCHAR(50) PRIMARY KEY,
         name VARCHAR(100) NOT NULL,
@@ -20,7 +26,7 @@ async function initializeDatabase() {
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
     `);
-    await pool.query(`
+    await client.query(`
       CREATE TABLE IF NOT EXISTS doubts (
         id SERIAL PRIMARY KEY,
         user_id VARCHAR(50) NOT NULL,
@@ -32,7 +38,7 @@ async function initializeDatabase() {
         FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
       );
     `);
-    await pool.query(`
+    await client.query(`
       CREATE TABLE IF NOT EXISTS responses (
         id SERIAL PRIMARY KEY,
         doubt_id INTEGER NOT NULL,
@@ -44,29 +50,7 @@ async function initializeDatabase() {
         FOREIGN KEY (responder_id) REFERENCES users(user_id) ON DELETE CASCADE
       );
     `);
-    console.log('Database initialized successfully');
-  } catch (err) {
-    console.error('Database initialization failed:', err);
-    throw err; // This will stop the server if initialization fails
-  }
-}
-
-async function testConnection() {
-  const res = await pool.query('SELECT NOW()');
-  console.log('Database connection successful:', res.rows[0].now);
-}
-
-module.exports = { pool, initializeDatabase, testConnection };
-
-
-
-// Removed duplicate declaration of 'pool' and adjusted the code to use the existing 'pool' variable.
-
-async function initializeDatabaseWithEnv() {
-  try {
-    console.log('Attempting to connect to database with URL:', process.env.DATABASE_URL);
-    const client = await pool.connect();
-    // Create tables or perform initialization
+    
     client.release();
     console.log('Database initialized successfully');
   } catch (err) {
@@ -75,4 +59,14 @@ async function initializeDatabaseWithEnv() {
   }
 }
 
-module.exports = { pool, initializeDatabase, initializeDatabaseWithEnv };
+async function testConnection() {
+  try {
+    const res = await pool.query('SELECT NOW()');
+    console.log('Database connection successful:', res.rows[0].now);
+  } catch (err) {
+    console.error('Database connection test failed:', err);
+    throw err;
+  }
+}
+
+module.exports = { pool, initializeDatabase, testConnection };
