@@ -10,7 +10,7 @@ const PORT = process.env.PORT || 5000;
 
 // Configure CORS to allow requests from the frontend running on port 5500
 const corsOptions = {
-  origin: 'http://127.0.0.1:5500', // Allow requests from this origin
+  origin: 'http://127.0.0.1:5501', // Allow requests from this origin
   credentials: true, // Allow cookies or authorization headers if needed
   optionsSuccessStatus: 200 // Some legacy browsers choke on 204
 };
